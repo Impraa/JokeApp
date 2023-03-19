@@ -1,35 +1,40 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require('express');
-const app = express();
-const path = require("path");
-const methodOverride = require("method-override");
-const ExpressError = require("./utils/ExpressError.js");
+const express_1 = __importDefault(require("express"));
+const path_1 = __importDefault(require("path"));
+const method_override_1 = __importDefault(require("method-override"));
+const ExpressError_js_1 = require("./utils/ExpressError.js");
 //Database
-const mongoose = require("mongoose");
-const mongoSanitize = require("express-mongo-sanitize");
+const mongoose_1 = __importDefault(require("mongoose"));
+const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
 //Auth
-const cookieParser = require('cookie-parser');
+const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const user_1 = __importDefault(require("./routes/user"));
 //Ejs Template dynamic
-const ejsMate = require("ejs-mate");
+const ejsMate = require('ejs-mate');
+const app = (0, express_1.default)();
 //"mongodb://localhost:27017/jokeApp"
-mongoose.connect("mongodb://localhost:27017/jokeApp");
-mongoose.connection.on("error", console.error.bind(console, "Connection error"));
-mongoose.connection.once("open", () => {
+mongoose_1.default.connect("mongodb://localhost:27017/jokeApp");
+mongoose_1.default.connection.on("error", console.error.bind(console, "Connection error"));
+mongoose_1.default.connection.once("open", () => {
     console.log("Database connected");
 });
 app.engine("ejs", ejsMate);
+app.set("views", path_1.default.join(__dirname, "views"));
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride("_method"));
-app.use(mongoSanitize());
-app.use(cookieParser());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, method_override_1.default)("_method"));
+app.use((0, express_mongo_sanitize_1.default)());
+app.use((0, cookie_parser_1.default)());
+app.use("/", user_1.default);
 app.get('/', (req, res) => {
-    res.send('It works!');
+    res.render('Homepage');
 });
 app.all("*", (req, res, next) => {
-    next(new ExpressError("Page not found", 404));
+    next(new ExpressError_js_1.ExpressError("Page not found", 404));
 });
 app.use((err, req, res, next) => {
     const { statusCode = 500 } = err;
@@ -41,4 +46,3 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
     console.log("Listening on a port 3000");
 });
-//# sourceMappingURL=index.js.map

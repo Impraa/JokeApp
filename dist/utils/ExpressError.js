@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExpressError = void 0;
 class ExpressError extends Error {
     constructor(message, statusCode) {
         super();
@@ -7,5 +8,4 @@ class ExpressError extends Error {
         this.statusCode = statusCode;
     }
 }
-module.exports = ExpressError;
-//# sourceMappingURL=ExpressError.js.map
+exports.ExpressError = ExpressError;

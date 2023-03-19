@@ -1,20 +1,22 @@
 //Basics
 import { Request, Response, NextFunction } from "express";
-const express = require('express');
-const app = express();
-const path = require("path");
-const methodOverride = require("method-override");
-const ExpressError = require("./utils/ExpressError.js");
+import express from 'express';
+import path from 'path';
+import methodOverride from 'method-override';
+import { ExpressError } from './utils/ExpressError.js';
 
 //Database
-const mongoose = require("mongoose");
-const mongoSanitize = require("express-mongo-sanitize");
+import mongoose from 'mongoose';
+import mongoSanitize from 'express-mongo-sanitize';
 
 //Auth
-const cookieParser = require('cookie-parser');
+import cookieParser from 'cookie-parser';
+import user from "./routes/user";
 
 //Ejs Template dynamic
-const ejsMate = require("ejs-mate");
+const ejsMate = require('ejs-mate');
+
+const app = express();
 
 //"mongodb://localhost:27017/jokeApp"
 
@@ -30,16 +32,19 @@ mongoose.connection.once("open", () => {
 
 
 app.engine("ejs", ejsMate);
-app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(mongoSanitize());
 app.use(cookieParser());
 
+app.use("/", user);
+
 app.get('/', (req:Request, res:Response) => { 
-    res.send('It works!');
+    res.render('Homepage');
 })
 
 app.all("*", (req:Request, res:Response, next:NextFunction) => {
