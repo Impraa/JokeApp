@@ -1,3 +1,12 @@
-<navbar>
-  <p>Navbar is here</p>
+<navbar class="navbar">
+  <a href="/" class="navbar-title">Joke App</a>
+  <div class="content">
+    <a href="/getJoke">Get Joke</a>
+  </div>
+  <div class="user">
+    <% if(currentUser && currentUser != undefined){%>
+    <form action="/logout" method="post"><button>Logout</button></form>
+    <% }else{ %> <a href="/login">Login</a><a href="/register">Register</a> <% }
+    %>
+  </div>
 </navbar>

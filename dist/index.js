@@ -13,8 +13,9 @@ const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize
 //Auth
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const user_1 = __importDefault(require("./routes/user"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 //Ejs Template dynamic
-const ejsMate = require('ejs-mate');
+const ejsMate = require("ejs-mate");
 const app = (0, express_1.default)();
 //"mongodb://localhost:27017/jokeApp"
 mongoose_1.default.connect("mongodb://localhost:27017/jokeApp");
@@ -25,13 +26,28 @@ mongoose_1.default.connection.once("open", () => {
 app.engine("ejs", ejsMate);
 app.set("views", path_1.default.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(express_1.default.static(path_1.default.join(__dirname, "public")));
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use((0, method_override_1.default)("_method"));
 app.use((0, express_mongo_sanitize_1.default)());
-app.use((0, cookie_parser_1.default)());
+app.use((0, cookie_parser_1.default)("ChuckNorris"));
+app.use((req, res, next) => {
+    res.locals.currentUser = "";
+    if (req.cookies.token) {
+        try {
+            const decoded = jsonwebtoken_1.default.verify(req.cookies.token, "ChuckNorris");
+            res.locals.currentUser = decoded;
+        }
+        catch (error) {
+            res.clearCookie("token");
+            return next(new ExpressError_js_1.ExpressError("User not recognized", 403));
+        }
+    }
+    next();
+});
 app.use("/", user_1.default);
-app.get('/', (req, res) => {
-    res.render('Homepage');
+app.get("/", (req, res) => {
+    res.render("Homepage");
 });
 app.all("*", (req, res, next) => {
     next(new ExpressError_js_1.ExpressError("Page not found", 404));

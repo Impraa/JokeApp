@@ -13,10 +13,10 @@ const Middleware_1 = require("../utils/Middleware");
 const axios_1 = __importDefault(require("axios"));
 const SendEmail_1 = require("../utils/SendEmail");
 const router = express_1.default.Router();
-router.get('/register', (req, res) => {
-    res.render('Users/Register');
+router.get("/register", (req, res) => {
+    res.render("Users/Register");
 });
-router.post('/register', (0, CatchAsync_1.default)(async (req, res, next) => {
+router.post("/register", (0, CatchAsync_1.default)(async (req, res, next) => {
     const user = req.body.user;
     const passwordBuffer = Buffer.from(user.password);
     bcrypt_1.default.hash(passwordBuffer, 10, async (err, hash) => {
@@ -33,13 +33,13 @@ router.post('/register', (0, CatchAsync_1.default)(async (req, res, next) => {
             httpOnly: true,
             secure: true,
         });
-        res.redirect('/');
+        res.redirect("/");
     });
 }));
 router.get("/login", (req, res) => {
-    res.render('Users/Login');
+    res.render("Users/Login");
 });
-router.post('/login', (0, CatchAsync_1.default)(async (req, res, next) => {
+router.post("/login", (0, CatchAsync_1.default)(async (req, res, next) => {
     const user = req.body.user;
     const foundUser = await user_1.default.findOne({ email: user.email });
     if (!foundUser) {
@@ -49,23 +49,34 @@ router.post('/login', (0, CatchAsync_1.default)(async (req, res, next) => {
     if (!isMatch) {
         return next(new ExpressError_1.ExpressError("Incorrect Password", 400));
     }
-    const token = jsonwebtoken_1.default.sign(foundUser.toJSON(), "ChuckNorris", { expiresIn: "1h" });
+    const token = jsonwebtoken_1.default.sign(foundUser.toJSON(), "ChuckNorris", {
+        expiresIn: "1h",
+    });
     res.cookie("token", token, {
         httpOnly: true,
         secure: true,
     });
-    res.redirect('/');
+    res.redirect("/");
 }));
-router.get('/getJoke', Middleware_1.userAuth, (req, res) => {
-    res.render('Users/GetJoke');
+router.get("/getJoke", Middleware_1.userAuth, (req, res) => {
+    res.render("Users/GetJoke");
 });
-router.post('/getJoke', Middleware_1.userAuth, (0, CatchAsync_1.default)(async (req, res, next) => {
+router.post("/getJoke", Middleware_1.userAuth, (0, CatchAsync_1.default)(async (req, res, next) => {
     const email = String(req.user?.email);
-    console.log(email);
     if (!email) {
         return next(new ExpressError_1.ExpressError("Unauthorized", 401));
     }
-    const response = await axios_1.default.get('https://api.chucknorris.io/jokes/random');
+    const response = await axios_1.default.get("https://api.chucknorris.io/jokes/random");
+    if (!response.data?.value) {
+        return next(new ExpressError_1.ExpressError("Internal server error"));
+    }
     (0, SendEmail_1.sendJoke)(response.data?.value, email);
+    res.redirect("/getJoke");
 }));
+router.post("/logout", (req, res) => {
+    if (req.cookies.token) {
+        res.clearCookie("token");
+        res.redirect("/");
+    }
+});
 exports.default = router;
