@@ -12,12 +12,14 @@ const ExpressError_1 = require("../utils/ExpressError");
 const Middleware_1 = require("../utils/Middleware");
 const axios_1 = __importDefault(require("axios"));
 const SendEmail_1 = require("../utils/SendEmail");
+const VerifyUserInfo_1 = require("../utils/VerifyUserInfo");
 const router = express_1.default.Router();
 router.get("/register", (req, res) => {
     res.render("Users/Register");
 });
 router.post("/register", (0, CatchAsync_1.default)(async (req, res, next) => {
     const user = req.body.user;
+    (0, VerifyUserInfo_1.VerifyUserInfo)(user, next);
     const passwordBuffer = Buffer.from(user.password);
     bcrypt_1.default.hash(passwordBuffer, 10, async (err, hash) => {
         if (err) {

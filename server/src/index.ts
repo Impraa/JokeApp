@@ -14,6 +14,7 @@ import cookieParser from "cookie-parser";
 import user from "./routes/user";
 import { UserRequest } from "./utils/Interfaces.js";
 
+import cors from "cors";
 import Jwt from "jsonwebtoken";
 
 //Ejs Template dynamic
@@ -32,6 +33,8 @@ mongoose.connection.on(
 mongoose.connection.once("open", () => {
   console.log("Database connected");
 });
+
+app.use(cors());
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));

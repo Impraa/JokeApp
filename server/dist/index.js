@@ -13,6 +13,7 @@ const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize
 //Auth
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const user_1 = __importDefault(require("./routes/user"));
+const cors_1 = __importDefault(require("cors"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 //Ejs Template dynamic
 const ejsMate = require("ejs-mate");
@@ -23,6 +24,7 @@ mongoose_1.default.connection.on("error", console.error.bind(console, "Connectio
 mongoose_1.default.connection.once("open", () => {
     console.log("Database connected");
 });
+app.use((0, cors_1.default)());
 app.engine("ejs", ejsMate);
 app.set("views", path_1.default.join(__dirname, "views"));
 app.set("view engine", "ejs");

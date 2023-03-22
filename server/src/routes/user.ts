@@ -8,6 +8,7 @@ import { ExpressError } from "../utils/ExpressError";
 import { userAuth } from "../utils/Middleware";
 import axios from "axios";
 import { sendJoke } from "../utils/SendEmail";
+import { VerifyUserInfo } from "../utils/VerifyUserInfo";
 
 const router = express.Router();
 
@@ -19,6 +20,8 @@ router.post(
   "/register",
   CatchAsync(async (req, res, next) => {
     const user: User = req.body.user;
+
+    VerifyUserInfo(user, next!);
 
     const passwordBuffer = Buffer.from(user.password);
 
