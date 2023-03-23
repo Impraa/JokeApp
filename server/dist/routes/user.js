@@ -18,7 +18,7 @@ router.get("/register", (req, res) => {
     res.render("Users/Register");
 });
 router.post("/register", (0, CatchAsync_1.default)(async (req, res, next) => {
-    const user = req.body.user;
+    const user = req.body;
     (0, VerifyUserInfo_1.VerifyUserInfo)(user, next);
     const passwordBuffer = Buffer.from(user.password);
     bcrypt_1.default.hash(passwordBuffer, 10, async (err, hash) => {
@@ -31,11 +31,14 @@ router.post("/register", (0, CatchAsync_1.default)(async (req, res, next) => {
         const newUser = new user_1.default(user);
         await newUser.save();
         const token = jsonwebtoken_1.default.sign(user, "ChuckNorris", { expiresIn: "1h" });
-        res.cookie("token", token, {
+        res
+            .cookie("token", token, {
             httpOnly: true,
+            sameSite: "none",
             secure: true,
-        });
-        res.redirect("/");
+        })
+            .status(200)
+            .send(token);
     });
 }));
 router.get("/login", (req, res) => {
@@ -56,6 +59,7 @@ router.post("/login", (0, CatchAsync_1.default)(async (req, res, next) => {
     });
     res.cookie("token", token, {
         httpOnly: true,
+        sameSite: "none",
         secure: true,
     });
     res.redirect("/");

@@ -19,7 +19,7 @@ router.get("/register", (req: Request, res: Response) => {
 router.post(
   "/register",
   CatchAsync(async (req, res, next) => {
-    const user: User = req.body.user;
+    const user: User = req.body;
 
     VerifyUserInfo(user, next!);
 
@@ -40,11 +40,14 @@ router.post(
 
       const token = Jwt.sign(user, "ChuckNorris", { expiresIn: "1h" });
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-      });
-      res.redirect("/");
+      res
+        .cookie("token", token, {
+          httpOnly: true,
+          sameSite: "none",
+          secure: true,
+        })
+        .status(200)
+        .send(token);
     });
   })
 );
@@ -79,6 +82,7 @@ router.post(
 
     res.cookie("token", token, {
       httpOnly: true,
+      sameSite: "none",
       secure: true,
     });
     res.redirect("/");

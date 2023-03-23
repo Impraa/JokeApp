@@ -34,7 +34,12 @@ mongoose.connection.once("open", () => {
   console.log("Database connected");
 });
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5173",
+    credentials: true,
+  })
+);
 
 app.engine("ejs", ejsMate);
 app.set("views", path.join(__dirname, "views"));
