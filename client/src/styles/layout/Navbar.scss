@@ -44,6 +44,21 @@
       }
     }
   }
+  .logout {
+    border: none;
+    background-color: white;
+    height: inherit;
+    font-size: inherit;
+    padding: 0.5em 0em;
+    cursor: pointer;
+    transition: 0.125s ease-out;
+    &:hover {
+      transform: scale(1.125);
+      text-decoration: line-through;
+      text-decoration-color: $red;
+      text-decoration-thickness: 0.125em;
+    }
+  }
 }
 
 .show {
@@ -73,6 +88,9 @@
       .nav-title {
         font-size: 1.25em;
       }
+    }
+    .logout {
+      margin: 0.5em 3em;
     }
     .links {
       display: flex;

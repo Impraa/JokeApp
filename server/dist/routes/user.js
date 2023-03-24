@@ -8,10 +8,7 @@ const user_1 = __importDefault(require("../model/user"));
 const CatchAsync_1 = __importDefault(require("../utils/CatchAsync"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const ExpressError_1 = require("../utils/ExpressError");
 const Middleware_1 = require("../utils/Middleware");
-const axios_1 = __importDefault(require("axios"));
-const SendEmail_1 = require("../utils/SendEmail");
 const VerifyUserInfo_1 = require("../utils/VerifyUserInfo");
 const router = express_1.default.Router();
 router.get("/register", (req, res) => {
@@ -23,11 +20,14 @@ router.post("/register", (0, CatchAsync_1.default)(async (req, res, next) => {
     const passwordBuffer = Buffer.from(user.password);
     bcrypt_1.default.hash(passwordBuffer, 10, async (err, hash) => {
         if (err) {
-            return next(new ExpressError_1.ExpressError(err.message));
+            return res.status(500).send(err.message);
         }
         user.password = hash;
         delete user.confirmPassword;
-        console.log(user);
+        const existingUser = await user_1.default.findOne({ email: user.email });
+        if (existingUser) {
+            return res.status(409).send("E-mail has to be unique!");
+        }
         const newUser = new user_1.default(user);
         await newUser.save();
         const token = jsonwebtoken_1.default.sign(user, "ChuckNorris", { expiresIn: "1h" });
@@ -45,44 +45,58 @@ router.get("/login", (req, res) => {
     res.render("Users/Login");
 });
 router.post("/login", (0, CatchAsync_1.default)(async (req, res, next) => {
-    const user = req.body.user;
+    const user = req.body;
     const foundUser = await user_1.default.findOne({ email: user.email });
     if (!foundUser) {
-        return next(new ExpressError_1.ExpressError("User not found", 400));
+        return res.status(404).send("User not found, try again.");
     }
     const isMatch = await bcrypt_1.default.compare(String(user.password), String(foundUser.password));
     if (!isMatch) {
-        return next(new ExpressError_1.ExpressError("Incorrect Password", 400));
+        return res
+            .status(404)
+            .send("Password or email not recognized, try again.");
     }
     const token = jsonwebtoken_1.default.sign(foundUser.toJSON(), "ChuckNorris", {
         expiresIn: "1h",
     });
-    res.cookie("token", token, {
+    res
+        .cookie("token", token, {
         httpOnly: true,
         sameSite: "none",
         secure: true,
-    });
-    res.redirect("/");
+    })
+        .status(200)
+        .send(token);
 }));
 router.get("/getJoke", Middleware_1.userAuth, (req, res) => {
     res.render("Users/GetJoke");
 });
 router.post("/getJoke", Middleware_1.userAuth, (0, CatchAsync_1.default)(async (req, res, next) => {
     const email = String(req.user?.email);
-    if (!email) {
-        return next(new ExpressError_1.ExpressError("Unauthorized", 401));
+    console.log("Uspio si batice");
+    /* if (!email) {
+      return next!(new ExpressError("Unauthorized", 401));
     }
-    const response = await axios_1.default.get("https://api.chucknorris.io/jokes/random");
+
+    const response = await axios.get("https://api.chucknorris.io/jokes/random");
+
     if (!response.data?.value) {
-        return next(new ExpressError_1.ExpressError("Internal server error"));
+      return next!(new ExpressError("Internal server error"));
     }
-    (0, SendEmail_1.sendJoke)(response.data?.value, email);
-    res.redirect("/getJoke");
+
+    sendJoke(response.data?.value, email);
+
+    res.redirect("/getJoke"); */
 }));
 router.post("/logout", (req, res) => {
-    if (req.cookies.token) {
-        res.clearCookie("token");
-        res.redirect("/");
+    if (req.body.token) {
+        res.clearCookie("token", {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+        });
+        return res.status(200).send("User logged out");
     }
+    res.status(500).send("Something went wrong");
 });
 exports.default = router;

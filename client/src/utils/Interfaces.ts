@@ -11,7 +11,7 @@ export interface User {
   email?: String;
 }
 
-export interface registerError {
+export interface flashMsg {
   state: Boolean;
   message: String;
 }

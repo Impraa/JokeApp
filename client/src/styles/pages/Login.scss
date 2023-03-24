@@ -1,4 +1,4 @@
-.register {
+.login {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,10 +21,7 @@
     padding: 0.5em 1.25em;
   }
   .email,
-  .last-name,
-  .first-name,
-  .first-password,
-  .second-password {
+  .password {
     display: flex;
     justify-content: flex-start;
     margin: 1.5em 0em;

@@ -9,6 +9,7 @@ import { userAuth } from "../utils/Middleware";
 import axios from "axios";
 import { sendJoke } from "../utils/SendEmail";
 import { VerifyUserInfo } from "../utils/VerifyUserInfo";
+import cookiesMiddleware from "universal-cookie-express";
 
 const router = express.Router();
 
@@ -27,14 +28,19 @@ router.post(
 
     Bcrypt.hash(passwordBuffer, 10, async (err, hash) => {
       if (err) {
-        return next!(new ExpressError(err.message));
+        return res.status(500).send(err.message);
       }
 
       user.password = hash;
 
       delete user.confirmPassword;
 
-      console.log(user);
+      const existingUser = await UserModel.findOne({ email: user.email });
+
+      if (existingUser) {
+        return res.status(409).send("E-mail has to be unique!");
+      }
+
       const newUser = new UserModel(user);
       await newUser.save();
 
@@ -59,12 +65,12 @@ router.get("/login", (req: Request, res: Response) => {
 router.post(
   "/login",
   CatchAsync(async (req, res, next) => {
-    const user: User = req.body.user;
+    const user: User = req.body;
 
     const foundUser = await UserModel.findOne({ email: user.email });
 
     if (!foundUser) {
-      return next!(new ExpressError("User not found", 400));
+      return res.status(404).send("User not found, try again.");
     }
 
     const isMatch = await Bcrypt.compare(
@@ -73,19 +79,23 @@ router.post(
     );
 
     if (!isMatch) {
-      return next!(new ExpressError("Incorrect Password", 400));
+      return res
+        .status(404)
+        .send("Password or email not recognized, try again.");
     }
 
     const token = Jwt.sign(foundUser.toJSON(), "ChuckNorris", {
       expiresIn: "1h",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
-    res.redirect("/");
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      })
+      .status(200)
+      .send(token);
   })
 );
 
@@ -99,7 +109,9 @@ router.post(
   CatchAsync(async (req: UserRequest, res, next) => {
     const email: String = String(req.user?.email);
 
-    if (!email) {
+    console.log("Uspio si batice");
+
+    /* if (!email) {
       return next!(new ExpressError("Unauthorized", 401));
     }
 
@@ -111,15 +123,20 @@ router.post(
 
     sendJoke(response.data?.value, email);
 
-    res.redirect("/getJoke");
+    res.redirect("/getJoke"); */
   })
 );
 
 router.post("/logout", (req: Request, res: Response) => {
-  if (req.cookies.token) {
-    res.clearCookie("token");
-    res.redirect("/");
+  if (req.body.token) {
+    res.clearCookie("token", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+    return res.status(200).send("User logged out");
   }
+  res.status(500).send("Something went wrong");
 });
 
 export default router;

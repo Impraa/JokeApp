@@ -5,11 +5,14 @@ import "./index.scss";
 import { BrowserRouter } from "react-router-dom";
 import Navbar from "./layout/Navbar";
 import Footer from "./layout/Footer";
+import { CookiesProvider } from "react-cookie";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <BrowserRouter>
-    <Navbar />
-    <App />
-    <Footer />
-  </BrowserRouter>
+  <CookiesProvider>
+    <BrowserRouter>
+      <Navbar />
+      <App />
+      <Footer />
+    </BrowserRouter>
+  </CookiesProvider>
 );

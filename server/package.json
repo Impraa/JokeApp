@@ -22,7 +22,8 @@
     "jsonwebtoken": "^9.0.0",
     "method-override": "^3.0.0",
     "mongoose": "^7.0.2",
-    "nodemailer": "^6.9.1"
+    "nodemailer": "^6.9.1",
+    "universal-cookie-express": "^4.0.3"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
