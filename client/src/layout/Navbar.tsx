@@ -38,7 +38,7 @@ function Navbar() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    /*   axios
+    axios
       .post("http://localhost:3000/logout", cookie, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -48,21 +48,6 @@ function Navbar() {
       .then((response) => {
         if (response.status === 200) {
           removeCookie("token");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      }); */
-
-    axios
-      .post("http://localhost:3000/getJoke", cookie, {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        if (response.status === 200) {
         }
       })
       .catch((error) => {

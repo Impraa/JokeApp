@@ -4,6 +4,7 @@ import Homepage from "./pages/Homepage";
 import Error404 from "./pages/Error404";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import GetJoke from "./pages/GetJoke";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<Homepage />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/getJoke" element={<GetJoke />} />
       <Route path="*" element={<Error404 />} />
     </Routes>
   );

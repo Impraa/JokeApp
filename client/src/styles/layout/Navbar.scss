@@ -38,9 +38,7 @@
       transition: 0.125s ease-out;
       &:hover {
         transform: scale(1.125);
-        text-decoration: line-through;
-        text-decoration-color: $red;
-        text-decoration-thickness: 0.125em;
+        color: #f1c709;
       }
     }
   }
@@ -54,9 +52,7 @@
     transition: 0.125s ease-out;
     &:hover {
       transform: scale(1.125);
-      text-decoration: line-through;
-      text-decoration-color: $red;
-      text-decoration-thickness: 0.125em;
+      color: #f1c709;
     }
   }
 }
@@ -86,7 +82,8 @@
     .title-and-hamburger {
       padding: 0 0.75em;
       .nav-title {
-        font-size: 1.25em;
+        font-size: 1.5em;
+        font-weight: 500;
       }
     }
     .logout {
@@ -98,7 +95,9 @@
       justify-content: space-between;
       align-items: center;
       height: 1em;
-      padding: 0 2em;
+      padding: 0 1em;
+      text-align: center;
+      font-size: 1.25em;
       transition: 0.2s ease-in-out;
       .nav-item {
         color: black;

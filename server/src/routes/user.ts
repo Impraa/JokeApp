@@ -4,18 +4,12 @@ import CatchAsync from "../utils/CatchAsync";
 import { User, UserRequest } from "../utils/Interfaces";
 import Jwt from "jsonwebtoken";
 import Bcrypt from "bcrypt";
-import { ExpressError } from "../utils/ExpressError";
 import { userAuth } from "../utils/Middleware";
 import axios from "axios";
 import { sendJoke } from "../utils/SendEmail";
 import { VerifyUserInfo } from "../utils/VerifyUserInfo";
-import cookiesMiddleware from "universal-cookie-express";
 
 const router = express.Router();
-
-router.get("/register", (req: Request, res: Response) => {
-  res.render("Users/Register");
-});
 
 router.post(
   "/register",
@@ -58,10 +52,6 @@ router.post(
   })
 );
 
-router.get("/login", (req: Request, res: Response) => {
-  res.render("Users/Login");
-});
-
 router.post(
   "/login",
   CatchAsync(async (req, res, next) => {
@@ -99,31 +89,31 @@ router.post(
   })
 );
 
-router.get("/getJoke", userAuth, (req: Request, res: Response) => {
-  res.render("Users/GetJoke");
-});
-
 router.post(
   "/getJoke",
   userAuth,
   CatchAsync(async (req: UserRequest, res, next) => {
-    const email: String = String(req.user?.email);
+    try {
+      const user = Jwt.verify(req.body.token, "ChuckNorris") as User;
 
-    console.log("Uspio si batice");
+      if (!user.email) {
+        return res.status(401).send("Unauthorized");
+      }
 
-    /* if (!email) {
-      return next!(new ExpressError("Unauthorized", 401));
+      const response = await axios.get(
+        "https://api.chucknorris.io/jokes/random"
+      );
+
+      if (!response.data?.value) {
+        return res.status(500).send("Internal server error");
+      }
+
+      sendJoke(response.data?.value, user.email);
+
+      return res.status(200).send("Email has been sent");
+    } catch (error) {
+      return res.status(403).send("User not recognized");
     }
-
-    const response = await axios.get("https://api.chucknorris.io/jokes/random");
-
-    if (!response.data?.value) {
-      return next!(new ExpressError("Internal server error"));
-    }
-
-    sendJoke(response.data?.value, email);
-
-    res.redirect("/getJoke"); */
   })
 );
 

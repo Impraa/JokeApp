@@ -9,6 +9,8 @@ const CatchAsync_1 = __importDefault(require("../utils/CatchAsync"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const Middleware_1 = require("../utils/Middleware");
+const axios_1 = __importDefault(require("axios"));
+const SendEmail_1 = require("../utils/SendEmail");
 const VerifyUserInfo_1 = require("../utils/VerifyUserInfo");
 const router = express_1.default.Router();
 router.get("/register", (req, res) => {
@@ -72,21 +74,21 @@ router.get("/getJoke", Middleware_1.userAuth, (req, res) => {
     res.render("Users/GetJoke");
 });
 router.post("/getJoke", Middleware_1.userAuth, (0, CatchAsync_1.default)(async (req, res, next) => {
-    const email = String(req.user?.email);
-    console.log("Uspio si batice");
-    /* if (!email) {
-      return next!(new ExpressError("Unauthorized", 401));
+    try {
+        const user = jsonwebtoken_1.default.verify(req.body.token, "ChuckNorris");
+        if (!user.email) {
+            return res.status(401).send("Unauthorized");
+        }
+        const response = await axios_1.default.get("https://api.chucknorris.io/jokes/random");
+        if (!response.data?.value) {
+            return res.status(500).send("Internal server error");
+        }
+        (0, SendEmail_1.sendJoke)(response.data?.value, user.email);
+        return res.status(200).send("Email has been sent");
     }
-
-    const response = await axios.get("https://api.chucknorris.io/jokes/random");
-
-    if (!response.data?.value) {
-      return next!(new ExpressError("Internal server error"));
+    catch (error) {
+        return res.status(403).send("User not recognized");
     }
-
-    sendJoke(response.data?.value, email);
-
-    res.redirect("/getJoke"); */
 }));
 router.post("/logout", (req, res) => {
     if (req.body.token) {

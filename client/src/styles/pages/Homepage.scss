@@ -1,0 +1,40 @@
+@import "../variables";
+
+.homepage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 77.5vh;
+  padding: 0em 1em;
+  .hero-title {
+    font-size: 2.75em;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+  .hero-text {
+    line-height: 1.4em;
+    font-size: 1.25em;
+    text-align: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .homepage {
+    padding: 0em 3em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .homepage {
+    padding: 0em 5em;
+  }
+}
+
+@media (min-width: 1440px) {
+  .homepage {
+    .hero-text {
+      font-size: 1.5em;
+    }
+  }
+}
