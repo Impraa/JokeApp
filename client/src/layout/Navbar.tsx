@@ -68,7 +68,7 @@ function Navbar() {
                 setStyle(false);
               }
             }}
-            color="black"
+            color="white"
             easing="ease-out"
             rounded
           />
@@ -81,7 +81,10 @@ function Navbar() {
       </div>
 
       {cookie.token ? (
-        <form onSubmit={(e) => handleSubmit(e)}>
+        <form
+          className={style ? "show" : "hide"}
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <button className={style ? "show logout" : "hide logout"}>
             Logout
           </button>

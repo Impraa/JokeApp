@@ -1,8 +1,14 @@
+@import "../variables";
+
 .footer {
   position: fixed;
   bottom: 0;
   font-size: 1.125em;
   padding: 0.4em 0.2em;
+  width: 100vw;
+  color: #fff;
+  background-color: $backgroundBlack;
+  color: $hoverColor;
 }
 
 @media (min-width: 1024px) {

@@ -1,11 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VerifyUserInfo = void 0;
-const ExpressError_1 = require("./ExpressError");
-const VerifyUserInfo = (user, next) => {
+const VerifyUserInfo = (user, res) => {
     if (/\d/.test(String(user.fName)) || /\d/.test(String(user.lName))) {
-        console.log("Istina");
-        return next(new ExpressError_1.ExpressError(`First name and Last name can't contain numbers`, 400));
+        return res
+            .status(400)
+            .send(`First name and Last name can't contain numbers`);
+    }
+    else if (!user.email.includes("@")) {
+        return res.status(400).send(`Please provide a valid email`);
+    }
+    else if (user.password !== user.confirmPassword) {
+        return res.status(400).send(`Passwords are not matching`);
     }
 };
 exports.VerifyUserInfo = VerifyUserInfo;

@@ -8,7 +8,6 @@ import { useCookies } from "react-cookie";
 function Login() {
   const [formData, setFormData] = useState<User>();
   const [error, setError] = useState<flashMsg>();
-  const [success, setSuccess] = useState<flashMsg>();
   const [cookie, setCookie] = useCookies(["token"]);
   const navigate = useNavigate();
 
@@ -29,14 +28,7 @@ function Login() {
       .then((response) => {
         if (response.status === 200) {
           setCookie("token", response.data, { path: "/" });
-          setSuccess({
-            state: true,
-            message: "Logged in successfuly you will be redirected shortly!",
-          });
-          setTimeout(() => {
-            setSuccess({ state: false, message: "" });
-            return navigate("/");
-          }, 5000);
+          return navigate("/");
         }
       })
       .catch((error) => {
@@ -47,7 +39,6 @@ function Login() {
   return (
     <div className="login">
       {error?.state && <div className="error">{error.message}</div>}
-      {success?.state && <div className="success">{success.message}</div>}
       <form onSubmit={(e) => handleSubmit(e)}>
         <div className="email">
           <input
@@ -60,7 +51,7 @@ function Login() {
         </div>
         <div className="password">
           <input
-            type="text"
+            type="password"
             name="password"
             onChange={(e) => handleChange(e)}
             required

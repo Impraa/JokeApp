@@ -1,0 +1,20 @@
+@import "../variables";
+.error-404 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 77.5vh;
+  font-size: 1.75em;
+  text-align: center;
+  margin: 0em 0.25em;
+  .number {
+    color: $color404;
+  }
+}
+
+@media (min-width: 1024px) {
+  .error-404 {
+    font-size: 2.5em;
+  }
+}

@@ -95,7 +95,7 @@ function Register() {
         </div>
         <div className="first-password">
           <input
-            type="text"
+            type="password"
             name="password"
             onChange={(e) => handleChange(e)}
             required
@@ -104,7 +104,7 @@ function Register() {
         </div>
         <div className="second-password">
           <input
-            type="text"
+            type="password"
             name="confirmPassword"
             onChange={(e) => handleChange(e)}
             required

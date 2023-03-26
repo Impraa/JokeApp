@@ -1,4 +1,3 @@
-import { useCookies } from "react-cookie";
 import "../styles/pages/Homepage.scss";
 function Homepage() {
   return (

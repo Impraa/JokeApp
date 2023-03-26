@@ -1,8 +1,6 @@
 //Basics
 import { Request, Response, NextFunction } from "express";
 import express from "express";
-import path from "path";
-import methodOverride from "method-override";
 
 //Database
 import mongoose from "mongoose";
@@ -11,12 +9,8 @@ import mongoSanitize from "express-mongo-sanitize";
 //Auth
 import cookieParser from "cookie-parser";
 import user from "./routes/user";
-import { UserRequest } from "./utils/Interfaces.js";
 
 import cors from "cors";
-
-//Ejs Template dynamic
-const ejsMate = require("ejs-mate");
 
 const app = express();
 
@@ -39,13 +33,7 @@ app.use(
   })
 );
 
-app.engine("ejs", ejsMate);
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
-app.use(express.static(path.join(__dirname, "public")));
-
 app.use(express.urlencoded({ extended: true }));
-app.use(methodOverride("_method"));
 app.use(mongoSanitize());
 app.use(cookieParser("ChuckNorris"));
 app.use("/", user);

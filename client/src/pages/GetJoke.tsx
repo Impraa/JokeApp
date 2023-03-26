@@ -3,6 +3,7 @@ import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 import { flashMsg } from "../utils/Interfaces";
 import axios from "axios";
+import "../styles/pages/GetJoke.scss";
 
 function GetJoke() {
   const [cookie, setCookie] = useCookies(["token"]);
@@ -43,7 +44,7 @@ function GetJoke() {
   }
 
   return (
-    <div>
+    <div className="get-joke">
       {error?.state && <div className="error">{error.message}</div>}
       {success?.state && <div className="success">{success.message}</div>}
       <form onSubmit={(e) => handleSubmit(e)}>

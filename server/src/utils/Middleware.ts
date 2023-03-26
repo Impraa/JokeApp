@@ -1,13 +1,9 @@
-import { Response, NextFunction } from "express";
+import { Response, NextFunction, Request } from "express";
 
 import Jwt from "jsonwebtoken";
-import { User, UserRequest } from "./Interfaces";
+import { User } from "./Interfaces";
 
-export const userAuth = (
-  req: UserRequest,
-  res: Response,
-  next: NextFunction
-) => {
+export const userAuth = (req: Request, res: Response, next: NextFunction) => {
   const token = req.cookies.token;
 
   const frontCookie = req.body.token;
